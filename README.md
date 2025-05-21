@@ -2,6 +2,8 @@
 
 This project implements a Model Context Protocol (MCP) server that interfaces with the Mollie API to provide information about Mollie payments.
 
+![Mollie MCP Server Integration](/.github/assets/mollie-mcp.png)
+
 ## About MCP Servers
 
 Model Context Protocol (MCP) servers act as bridges between language models and various data sources or tools. They expose capabilities (like fetching data or executing actions) that a language model can then utilize to fulfill user requests. This allows language models to interact with external systems and access real-time information or perform tasks beyond their inherent knowledge. This server, for example, allows a model to query Mollie payment information.
@@ -19,7 +21,7 @@ Model Context Protocol (MCP) servers act as bridges between language models and 
 1.  **Clone the repository:**
 
     ```bash
-    git clone <repository-url>
+    git clone git@github.com:hreinberger/mollie-mcp.git
     cd mollie-mcp
     ```
 
