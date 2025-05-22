@@ -24,3 +24,32 @@ export async function mollieGetPayments(limit = 5) {
     const payments = await mollieClient.payments.page({ limit });
     return payments;
 }
+
+export async function mollieCreatePaymentLink(amount: string): Promise<string> {
+    console.error('Creating payment link with amount:', amount);
+    // Ensure the client is initialized before making API calls
+    if (!mollieClient) {
+        throw new Error(
+            'Mollie client is not initialized. MOLLIE_API_KEY might be missing.'
+        );
+    }
+    const link = await mollieClient.paymentLinks.create({
+        amount: {
+            currency: 'EUR',
+            value: amount, // Amount in EUR
+        },
+        description: 'Test payment link',
+        redirectUrl: 'https://mollie-next.vercel.app/success',
+        // Add more options as needed
+    });
+
+    // Attempt to get the payment URL using the getPaymentUrl() method
+    const paymentUrl = link.getPaymentUrl();
+
+    if (!paymentUrl) {
+        console.error('Payment link URL not found using getPaymentUrl().');
+        throw new Error('Payment link URL not found in Mollie API response');
+    }
+
+    return paymentUrl;
+}
