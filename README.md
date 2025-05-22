@@ -6,7 +6,7 @@ This project implements a Model Context Protocol (MCP) server that interfaces wi
 
 ## What Is This Good For?
 
-Currently, not much. Since Mollie expects customers to be available for a redirect, it doesn't really make sense to do payments over an LLM conversation (maybe with payment links though?). So for now I've implemented the "List Payments" Endpoint. Users can ask for the latest transactions on their mollie account and the LLM will receive all available info on them. Based on this, we could let the LLM do creative things like advanced BI or writing Haikus about the names of your customers.
+Currently, not much. Since Mollie expects customers to be available for a redirect, it doesn't really make sense to do payments over an LLM conversation (except for payment links with a long runtime). So for now I've implemented the "List Payments" Endpoint. Users can ask for the latest transactions on their mollie account and the LLM will receive all available info on them. Based on this, we could let the LLM do creative things like advanced BI or writing Haikus about the names of your customers.
 
 The benefit of piping your payment data to an LLM is that you can now query the data in natural language without rigid UIs.
 
@@ -78,9 +78,15 @@ Model Context Protocol (MCP) servers act as bridges between language models and 
 The server exposes the following tools that can be called by an MCP client:
 
 -   **`fetch-transactions`**:
+
     -   Description: Get a list of the last transactions from Mollie.
     -   Input: `limit` (number, optional, default: 5) - The number of transactions to retrieve.
     -   Output: A JSON string containing the list of payment objects from Mollie.
+
+-   **`create-payment-link`**:
+    -   Description: Create a payment link with a specified amount.
+    -   Input: `amount` (string) - The amount for the payment, formatted as a string with a dot for the decimal separator (e.g., "123.45").
+    -   Output: A string containing the direct URL to the Mollie payment link.
 
 This MCP server is designed to be a simple example. It can be extended with more tools to interact further with the Mollie API or other services.
 
