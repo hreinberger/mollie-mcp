@@ -1,0 +1,31 @@
+name: openwebui
+services:
+    open-webui:
+        ports:
+            - 3000:8080
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        volumes:
+            - open-webui:/app/backend/data
+        container_name: open-webui
+        restart: unless-stopped
+        image: ghcr.io/open-webui/open-webui:main
+        networks:
+            - owui-network
+    mollie-mcp:
+        image: ghcr.io/hreinberger/mollie-mcp:latest
+        ports:
+            - '3001:3001'
+        environment:
+            - MOLLIE_API_KEY=<YOUR_MOLLIE_API_KEY>
+        container_name: mollie-mcp
+        restart: unless-stopped
+        networks:
+            - owui-network
+volumes:
+    open-webui:
+        external: true
+        name: open-webui
+networks:
+    owui-network:
+        driver: bridge

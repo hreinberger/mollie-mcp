@@ -1,0 +1,9 @@
+{
+    "servers": {
+        "mollie-mcp": {
+            "type": "stdio",
+            "command": "node",
+            "args": ["<absolute path to repo>/build/index.js"]
+        }
+    }
+}
