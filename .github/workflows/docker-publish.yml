@@ -1,0 +1,50 @@
+name: Docker Image CI
+
+on:
+    push:
+        branches: ['main']
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+jobs:
+    build_and_push:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write # Needed to push to ghcr.io
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Extract metadata (tags, labels) for Docker
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                  images: ghcr.io/${{ github.repository_owner }}/mollie-mcp # Use repository_owner for personal accounts or org name
+                  tags: |
+                      type=sha # Use commit SHA as a tag
+                      type=raw,value=latest,enable={{is_default_branch}} # Tag 'latest' for the default branch
+
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  push: true
+                  platforms: linux/amd64,linux/arm64 # Add this line
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  file: ./Dockerfile

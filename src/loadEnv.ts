@@ -12,16 +12,21 @@ const envPath = path.resolve(__dirname, '../.env');
 const dotenvResult = dotenv.config({ path: envPath });
 
 if (dotenvResult.error) {
-    // If the .env file is critical for the application, re-throwing the error
-    // ensures the application doesn't run with missing configuration.
-    console.error(
-        `Failed to load .env file from ${envPath}:`,
-        dotenvResult.error
+    // If the .env file is not found, log it but don't throw an error.
+    // The application can still run if environment variables are set directly.
+    console.warn(
+        `[loadEnv.ts] Warning: Could not load .env file from ${envPath}. Falling back to environment variables. Error: ${dotenvResult.error.message}`
     );
-    throw dotenvResult.error;
+    // throw dotenvResult.error; // Do not throw error, allow fallback to environment variables
+} else {
+    // Optional: Log if the .env file was parsed but is empty, for awareness.
+    if (dotenvResult.parsed && Object.keys(dotenvResult.parsed).length === 0) {
+        console.warn(
+            `[loadEnv.ts] .env file loaded from ${envPath} but is empty or contains no variables.`
+        );
+    } else if (dotenvResult.parsed) {
+        console.log(
+            `[loadEnv.ts] .env file loaded successfully from ${envPath}.`
+        );
+    }
 }
-
-// Optional: Log if the .env file was parsed but is empty, for awareness.
-// if (dotenvResult.parsed && Object.keys(dotenvResult.parsed).length === 0) {
-//     console.warn(`[loadEnv.ts] .env file loaded from ${envPath} but is empty or contains no variables.`);
-// }
