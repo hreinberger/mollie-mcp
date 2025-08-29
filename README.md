@@ -1,4 +1,8 @@
-# Mollie MCP Server
+> [!TIP]
+> Mollie launched an official MCP Server! Go to https://docs.mollie.com/docs/mollie-mcp-server to find out more.
+> If you want to tinker with MCP and your Mollie account, the offical MCP server is almost certainly the product you want to use.
+
+# Mollie MCP Server Proof-Of-Concept
 
 This project implements a Model Context Protocol (MCP) server that interfaces with the Mollie API to provide information about Mollie payments.
 
