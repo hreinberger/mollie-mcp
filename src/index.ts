@@ -15,10 +15,6 @@ import {
 const server = new McpServer({
     name: 'mollie-mcp',
     version: '0.1.0',
-    capabilities: {
-        resources: {},
-        tools: {},
-    },
 });
 
 // Define the tools our MCP server will provide
