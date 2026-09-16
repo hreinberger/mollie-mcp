@@ -1,0 +1,19 @@
+FROM node:lts-slim
+
+WORKDIR /app
+
+# It's good practice to commit your package-lock.json file.
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY src ./src
+COPY tsconfig.json .
+
+RUN npm run build
+RUN npm prune --production
+
+# No MOLLIE_API_KEY here -- this transport authenticates per request via
+# OAuth bearer tokens, never a static credential baked into the image.
+EXPOSE 3001
+
+CMD ["node", "build/httpServer.js"]

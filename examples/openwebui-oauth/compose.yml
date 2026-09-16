@@ -1,0 +1,39 @@
+name: openwebui-oauth
+services:
+    open-webui:
+        ports:
+            - 3000:8080
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        volumes:
+            - open-webui:/app/backend/data
+        environment:
+            # Required: without this, Open WebUI can't decrypt stored OAuth
+            # tokens across container restarts, and every user has to
+            # re-authenticate with Mollie each time.
+            - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:?set a random secret, e.g. openssl rand -hex 32}
+            # Must be the address your browser actually uses to reach Open
+            # WebUI -- Mollie's login redirects back here.
+            - WEBUI_URL=${WEBUI_URL:-http://localhost:3000}
+        container_name: open-webui
+        restart: unless-stopped
+        image: ghcr.io/open-webui/open-webui:main
+        networks:
+            - owui-network
+    mollie-mcp:
+        build:
+            context: ../..
+            dockerfile: Dockerfile.http
+        ports:
+            - '3001:3001'
+        container_name: mollie-mcp
+        restart: unless-stopped
+        networks:
+            - owui-network
+volumes:
+    open-webui:
+        external: true
+        name: open-webui
+networks:
+    owui-network:
+        driver: bridge

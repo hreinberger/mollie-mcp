@@ -81,6 +81,25 @@ Model Context Protocol (MCP) servers act as bridges between language models and 
     }
     ```
 
+## Alternative: HTTP + OAuth (no API key, browser-based login)
+
+`src/httpServer.ts` runs this server over Streamable HTTP instead of stdio,
+as an OAuth-protected resource that delegates authorization to Mollie's own
+authorization server (`https://my.mollie.com` -- the same one behind
+Mollie's official `mcp.mollie.com`). No `MOLLIE_API_KEY` is needed for this
+mode: each request carries its own bearer token, obtained by the MCP client
+via browser-based login (PKCE, with Dynamic Client Registration where
+supported).
+
+```bash
+npm run build
+npm run start:http   # listens on :3001 by default
+```
+
+See [`examples/openwebui-oauth`](examples/openwebui-oauth) for a full local
+walkthrough connecting this to Open WebUI's native MCP support (v0.6.31+),
+including why this doesn't require hosting the server publicly.
+
 ## Available Tools
 
 The server exposes the following tools that can be called by an MCP client:
