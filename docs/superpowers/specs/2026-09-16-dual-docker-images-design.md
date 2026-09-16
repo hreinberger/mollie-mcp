@@ -73,19 +73,41 @@ explicitly instead of relying on an ambiguous `:latest`.
   (this example is meant as a local walkthrough), but add a comment/note
   in its readme that a published `ghcr.io/hreinberger/mollie-mcp:http`
   image also exists as an alternative to building locally.
-- `README.md`: mention both tags under the Docker-related sections so the
-  choice between stdio/mcpo and HTTP/OAuth is visible from the top-level
-  docs.
+- `README.md`: there is currently no Docker section in `README.md` at all.
+  Add a new `## Running with Docker` section, placed after "Alternative:
+  HTTP + OAuth" and before "Available Tools", covering both tags
+  (`:mcpo` for the stdio+API-key path, `:http` for the OAuth path) with
+  links to `examples/openwebui` and `examples/openwebui-oauth`
+  respectively.
 
 ### 4. Real deployment (`~/git/openwebui/compose.yml`, separate repo)
 
+This directory is **not a git repository** — this is a manual, unversioned
+edit, not a branch/PR.
+
 - Switch the `mollie-mcp` service to `image:
   ghcr.io/hreinberger/mollie-mcp:http`.
-- Remove the now-unused `MOLLIE_API_KEY` (commented out) and
-  `MCP_SERVER_URL` env vars — the HTTP/OAuth server doesn't read either.
-- Add `WEBUI_SECRET_KEY` and `WEBUI_URL` to the `open-webui` service
-  (required so OAuth tokens survive container restarts and Mollie's login
-  redirect resolves correctly), matching `examples/openwebui-oauth`.
+- Remove the commented-out `MOLLIE_API_KEY` line — unused by the HTTP/OAuth
+  server.
+- Fix `MCP_SERVER_URL` (do not drop it): it's read by `src/httpServer.ts`
+  and embedded in the OAuth-protected-resource metadata that Open WebUI's
+  backend fetches back over the `owui-network` docker network. It's
+  currently set to `http://localhost:3001/mcp`, which is wrong — from
+  inside the `open-webui` container, `localhost` means itself, not
+  `mollie-mcp`. Change it to `http://mollie-mcp:3001/mcp`, matching the
+  address Open WebUI actually uses to reach this server (per
+  `examples/openwebui-oauth`'s readme).
+- Leave `PORT=3001` as-is (matches `Dockerfile.http`'s default, harmless).
+- Leave the existing `WEBUI_SECRET_KEY` (already present, hardcoded value)
+  untouched — it already does its job; no need to convert it to the
+  `${WEBUI_SECRET_KEY:?...}` env-var pattern used in the example.
+- Add `WEBUI_URL=https://ai.hannesreinberger.de` to the `open-webui`
+  service. This stack runs behind a Cloudflare tunnel
+  (`cloudflared-tunnel-openwebui`), so the browser reaches Open WebUI at
+  `ai.hannesreinberger.de`, not `localhost` — `WEBUI_URL` must match this
+  so Mollie's login redirect resolves correctly, and so OAuth tokens
+  survive container restarts (the vars work together: `WEBUI_SECRET_KEY`
+  encrypts the token, `WEBUI_URL` is the redirect target).
 
 ## Out of scope
 
