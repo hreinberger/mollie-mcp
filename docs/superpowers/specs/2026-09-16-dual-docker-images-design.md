@@ -55,14 +55,17 @@ explicitly instead of relying on an ambiguous `:latest`.
 
 ### 2. CI (`.github/workflows/docker-publish.yml`)
 
-- Build and push both images from the same workflow run, one step per
-  Dockerfile:
-  - `Dockerfile.mcpo` → tags `ghcr.io/hreinberger/mollie-mcp:mcpo`,
-    `ghcr.io/hreinberger/mollie-mcp:mcpo-<sha>`.
-  - `Dockerfile.http` → tags `ghcr.io/hreinberger/mollie-mcp:http`,
-    `ghcr.io/hreinberger/mollie-mcp:http-<sha>`.
-- No bare `:latest` tag for either image — drop `type=raw,value=latest,...`
-  from both `docker/metadata-action` configs. Callers must pick `:mcpo` or
+- Build and push both images from the same workflow run. This means
+  duplicating the existing `metadata-action` + `build-push-action` step
+  pair into two full pairs (not a shared meta step), one per Dockerfile:
+  - Pair 1: `docker/metadata-action` with `tags: type=raw,value=mcpo` /
+    `type=sha,prefix=mcpo-`, feeding a `docker/build-push-action` with
+    `file: ./Dockerfile.mcpo`.
+  - Pair 2: `docker/metadata-action` with `tags: type=raw,value=http` /
+    `type=sha,prefix=http-`, feeding a `docker/build-push-action` with
+    `file: ./Dockerfile.http`.
+- No bare `:latest` tag for either image — neither `metadata-action` config
+  includes a `type=raw,value=latest` entry. Callers must pick `:mcpo` or
   `:http` explicitly.
 
 ### 3. Docs (`mollie-mcp` repo)
@@ -83,7 +86,8 @@ explicitly instead of relying on an ambiguous `:latest`.
 ### 4. Real deployment (`~/git/openwebui/compose.yml`, separate repo)
 
 This directory is **not a git repository** — this is a manual, unversioned
-edit, not a branch/PR.
+edit, not a branch/PR. Back up `compose.yml` (e.g. copy to `compose.yml.bak`)
+before editing, since there's no git history to fall back on here.
 
 - Switch the `mollie-mcp` service to `image:
   ghcr.io/hreinberger/mollie-mcp:http`.
