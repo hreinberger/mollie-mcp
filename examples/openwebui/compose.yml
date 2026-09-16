@@ -13,7 +13,7 @@ services:
         networks:
             - owui-network
     mollie-mcp:
-        image: ghcr.io/hreinberger/mollie-mcp:latest
+        image: ghcr.io/hreinberger/mollie-mcp:mcpo
         ports:
             - '3001:3001'
         environment:

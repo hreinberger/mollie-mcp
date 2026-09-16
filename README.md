@@ -100,6 +100,20 @@ See [`examples/openwebui-oauth`](examples/openwebui-oauth) for a full local
 walkthrough connecting this to Open WebUI's native MCP support (v0.6.31+),
 including why this doesn't require hosting the server publicly.
 
+## Running with Docker
+
+Two images are published to `ghcr.io/hreinberger/mollie-mcp`, one per
+transport above -- there is no `:latest` tag, pick the one that matches how
+you want to authenticate:
+
+- **`:http`** -- the OAuth server (`src/httpServer.ts`), no API key needed.
+  See [`examples/openwebui-oauth`](examples/openwebui-oauth) for a full
+  Open WebUI walkthrough.
+- **`:mcpo`** -- the stdio server (`src/index.ts`) fronted by
+  [`mcpo`](https://github.com/open-webui/mcpo) as an OpenAPI HTTP API,
+  using a static `MOLLIE_API_KEY`. See
+  [`examples/openwebui`](examples/openwebui) for a full walkthrough.
+
 ## Available Tools
 
 The server exposes the following tools that can be called by an MCP client:

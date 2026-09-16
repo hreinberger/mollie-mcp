@@ -9,8 +9,12 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install Python dependencies
-RUN pip install mcpo uv
+# Install Python dependencies, pinned: mcpo 0.0.20 only declares
+# mcp>=1.17.0 with no upper bound, and mcp 2.0.0 renamed
+# streamablehttp_client -> streamable_http_client, which breaks mcpo's
+# import. Installed at build time (not via `uvx`, which would re-resolve
+# this unpinned on every container start).
+RUN pip install "mcpo==0.0.20" "mcp>=1.17.0,<2"
 
 # Copy application dependency manifests
 # It's good practice to commit your package-lock.json or yarn.lock file.
@@ -34,5 +38,6 @@ RUN npm prune --production
 EXPOSE 3001
 
 # Command to run the application
-# Assumes npm run build creates ./build/index.js and mcpo is in PATH
-CMD ["uvx", "mcpo", "--host", "0.0.0.0", "--port", "3001", "--", "node", "/app/build/index.js"]
+# Uses the mcpo installed above directly -- not `uvx`, which would
+# re-resolve dependencies unpinned on every container start.
+CMD ["mcpo", "--host", "0.0.0.0", "--port", "3001", "--", "node", "/app/build/index.js"]
