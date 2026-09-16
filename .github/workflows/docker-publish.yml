@@ -30,21 +30,44 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Extract metadata (tags, labels) for Docker
-              id: meta
+            - name: Extract metadata (mcpo image)
+              id: meta_mcpo
               uses: docker/metadata-action@v5
               with:
-                  images: ghcr.io/${{ github.repository_owner }}/mollie-mcp # Use repository_owner for personal accounts or org name
+                  images: ghcr.io/${{ github.repository_owner }}/mollie-mcp
+                  flavor: |
+                      latest=false
                   tags: |
-                      type=sha # Use commit SHA as a tag
-                      type=raw,value=latest,enable={{is_default_branch}} # Tag 'latest' for the default branch
+                      type=raw,value=mcpo
+                      type=sha,prefix=mcpo-
 
-            - name: Build and push Docker image
+            - name: Build and push mcpo image
               uses: docker/build-push-action@v5
               with:
                   context: .
+                  file: ./Dockerfile.mcpo
                   push: true
-                  platforms: linux/amd64,linux/arm64 # Add this line
-                  tags: ${{ steps.meta.outputs.tags }}
-                  labels: ${{ steps.meta.outputs.labels }}
-                  file: ./Dockerfile
+                  platforms: linux/amd64,linux/arm64
+                  tags: ${{ steps.meta_mcpo.outputs.tags }}
+                  labels: ${{ steps.meta_mcpo.outputs.labels }}
+
+            - name: Extract metadata (http image)
+              id: meta_http
+              uses: docker/metadata-action@v5
+              with:
+                  images: ghcr.io/${{ github.repository_owner }}/mollie-mcp
+                  flavor: |
+                      latest=false
+                  tags: |
+                      type=raw,value=http
+                      type=sha,prefix=http-
+
+            - name: Build and push http image
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  file: ./Dockerfile.http
+                  push: true
+                  platforms: linux/amd64,linux/arm64
+                  tags: ${{ steps.meta_http.outputs.tags }}
+                  labels: ${{ steps.meta_http.outputs.labels }}
