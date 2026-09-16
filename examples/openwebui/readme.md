@@ -27,7 +27,7 @@ Before you begin, ensure you have the following installed and running on your lo
     services:
         # ...
         mollie-mcp:
-            image: ghcr.io/hreinberger/mollie-mcp:latest
+            image: ghcr.io/hreinberger/mollie-mcp:mcpo
             ports:
                 - '3001:3001'
             environment:
@@ -87,5 +87,5 @@ This will stop and remove the containers. The data volume for Open Web UI (`open
 
 ## Notes
 
--   The Mollie MCP server container (`mollie-mcp`) uses the image `ghcr.io/hreinberger/mollie-mcp:latest`. Ensure this image is up-to-date or specify a particular version if needed.
+-   The Mollie MCP server container (`mollie-mcp`) uses the image `ghcr.io/hreinberger/mollie-mcp:mcpo`. Ensure this image is up-to-date or specify a particular version if needed.
 -   The Docker network `owui-network` is created to allow easy communication between the `open-webui` container and the `mollie-mcp` container using their service names as hostnames (e.g., `http://mollie-mcp:3001`).
