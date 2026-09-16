@@ -32,6 +32,11 @@ export WEBUI_SECRET_KEY=$(openssl rand -hex 32)
 docker compose up -d --build
 ```
 
+`docker compose up -d --build` builds `mollie-mcp` from `Dockerfile.http`
+locally. To skip the local build, swap the `mollie-mcp` service's `build:`
+directive in `compose.yml` for `image: ghcr.io/hreinberger/mollie-mcp:http`
+instead -- CI publishes this tag from the same `Dockerfile.http`.
+
 This starts:
 
 - **Open WebUI** at `http://localhost:3000`
