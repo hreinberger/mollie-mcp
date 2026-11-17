@@ -21,11 +21,11 @@
     "license": "MIT",
     "description": "An MCP Server for the Mollie API",
     "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.26.0",
+        "@modelcontextprotocol/sdk": "^1.32.0",
         "@mollie/api-client": "^4.3.3",
         "dotenv": "^17.2.3",
         "express": "^5.1.0",
-        "zod": "^4.3.2"
+        "zod": "^4.6.7"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",
@@ -34,6 +34,6 @@
         "eslint": "^9.39.2",
         "globals": "^16.5.0",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.51.0"
+        "typescript-eslint": "^8.73.0"
     }
 }
